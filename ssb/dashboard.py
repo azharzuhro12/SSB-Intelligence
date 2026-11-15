@@ -528,7 +528,7 @@ with tab_matrix:
 # =============================================================================
 with tab_bi:
     # Header row with title & reset button
-    col_t1, col_t2 = st.columns([3, 1])
+    col_t1, col_t2 = st.columns([3.5, 1])
     with col_t1:
         st.markdown("**Asisten Analitik Bisnis SSB**")
     with col_t2:
@@ -543,19 +543,19 @@ with tab_bi:
             ]
             st.rerun()
 
-    # Minimalist prompt pills
-    p_options = [
-        "toko tertinggi 30 hari",
-        "toko terendah 30 hari",
-        "total penjualan toko 1 30 hari",
-        "pengaruh promo toko 2",
-        "rata-rata penjualan toko 5"
+    # Minimalist prompt chips with concise labels (prevents ellipsis clipping)
+    prompt_chips = [
+        ("Toko Tertinggi", "toko tertinggi 30 hari"),
+        ("Toko Terendah", "toko terendah 30 hari"),
+        ("Omzet Toko 1", "total penjualan toko 1 30 hari"),
+        ("Dampak Promo", "pengaruh promo toko 2"),
+        ("Rata-rata Toko 5", "rata-rata penjualan toko 5")
     ]
-    p_cols = st.columns(len(p_options))
+    p_cols = st.columns(len(prompt_chips))
     clicked_prompt = None
-    for i, p in enumerate(p_options):
-        if p_cols[i].button(p, key=f"q_{i}", use_container_width=True):
-            clicked_prompt = p
+    for i, (chip_label, query_text) in enumerate(prompt_chips):
+        if p_cols[i].button(chip_label, key=f"chip_{i}", use_container_width=True):
+            clicked_prompt = query_text
 
     if "chat_history" not in st.session_state:
         st.session_state.chat_history = [
@@ -567,29 +567,44 @@ with tab_bi:
             }
         ]
 
-    user_query = st.chat_input("Ketik pertanyaan Anda tentang data penjualan...")
-    active_q = clicked_prompt or user_query
-
-    if active_q:
+    # Handle quick prompt selection
+    if clicked_prompt:
         cur_t = pd.Timestamp.now().strftime("%H:%M")
-        st.session_state.chat_history.append({"role": "user", "text": active_q, "op": None, "time": cur_t})
-        ans = nlp.ask(active_q, df)
+        st.session_state.chat_history.append({"role": "user", "text": clicked_prompt, "op": None, "time": cur_t})
+        ans = nlp.ask(clicked_prompt, df)
         st.session_state.chat_history.append({
             "role": "assistant",
             "text": ans["answer"],
             "op": ans.get("op"),
             "time": cur_t
         })
+        st.rerun()
 
-    # Render Elegant Native Chat Messages
-    for msg in st.session_state.chat_history:
-        avatar = "👤" if msg["role"] == "user" else "🏢"
-        with st.chat_message(msg["role"], avatar=avatar):
-            st.write(msg["text"])
-            if msg.get("op"):
-                st.markdown(f'<div class="chat-op-badge">⚙️ Logika Data: <code>{msg["op"]}</code></div>', unsafe_allow_html=True)
-            if msg.get("time"):
-                st.markdown(f'<div class="chat-timestamp">{msg["time"]}</div>', unsafe_allow_html=True)
+    # 1. RENDER ALL CHAT MESSAGES FIRST (TOP / MIDDLE)
+    chat_container = st.container()
+    with chat_container:
+        for msg in st.session_state.chat_history:
+            avatar = "👤" if msg["role"] == "user" else "🏢"
+            with st.chat_message(msg["role"], avatar=avatar):
+                st.write(msg["text"])
+                if msg.get("op"):
+                    st.markdown(f'<div class="chat-op-badge">⚙️ Logika Data: <code>{msg["op"]}</code></div>', unsafe_allow_html=True)
+                if msg.get("time"):
+                    st.markdown(f'<div class="chat-timestamp">{msg["time"]}</div>', unsafe_allow_html=True)
+
+    # 2. CHAT INPUT BAR AT THE BOTTOM
+    user_query = st.chat_input("Ketik pertanyaan Anda tentang data penjualan...")
+    if user_query:
+        cur_t = pd.Timestamp.now().strftime("%H:%M")
+        st.session_state.chat_history.append({"role": "user", "text": user_query, "op": None, "time": cur_t})
+        ans = nlp.ask(user_query, df)
+        st.session_state.chat_history.append({
+            "role": "assistant",
+            "text": ans["answer"],
+            "op": ans.get("op"),
+            "time": cur_t
+        })
+        st.rerun()
 
 
 # =============================================================================
