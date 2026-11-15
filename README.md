@@ -2,11 +2,10 @@
 
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg?logo=python&logoColor=white)](https://www.python.org/)
 [![Model Performance](https://img.shields.io/badge/Holdout%20MAPE-9.36%25-brightgreen.svg)](#production-model-evaluation--benchmarks)
-[![Inference Latency](https://img.shields.io/badge/p95%20Latency-~75ms%20(CPU)-success.svg)](#rest-api-specification--examples)
-[![Tests](https://img.shields.io/badge/Tests-Passing%20(3%2F3)-emerald.svg)](#testing--quality-assurance)
+[![Inference Latency](https://img.shields.io/badge/p95%20Latency-111.8ms%20(CPU)-success.svg)](#rest-api-specification--examples)
+[![Tests](https://img.shields.io/badge/Tests-Passing%20(3%2F3)-emerald.svg)](#4-run-automated-tests)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.100%2B-009688.svg?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.30%2B-FF4B4B.svg?logo=streamlit&logoColor=white)](https://streamlit.io)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 An enterprise-grade, end-to-end Machine Learning and AI platform designed for retail and distribution networks (modeled for **SSB**). The platform integrates automated data quality ETL, 28-day store-level sales forecasting with promo simulation, unsupervised outlet clustering, Indonesian customer review sentiment analysis, natural language conversational BI, and automated MLOps drift governance.
 
@@ -15,6 +14,7 @@ Trained and evaluated on **1,017,209 real-world daily transaction records across
 ---
 
 ## Table of Contents
+- [Live Demo & Interface](#live-demo--interface)
 - [Business Problem & Solution](#business-problem--solution)
 - [Mapping to AI Engineer Competencies](#mapping-to-ai-engineer-competencies)
 - [System Architecture](#system-architecture)
@@ -24,6 +24,23 @@ Trained and evaluated on **1,017,209 real-world daily transaction records across
 - [REST API Specification & Examples](#rest-api-specification--examples)
 - [Repository Structure](#repository-structure)
 - [Documentation & Model Governance](#documentation--model-governance)
+- [Limitations & Scope](#limitations--scope)
+
+---
+
+## Live Demo & Interface
+
+![SSB Intelligence Demo](assets/demo.gif)
+
+> Full high-resolution walkthrough video: **[Watch / Download Demo Video (MP4)](assets/demo.mp4)** (`1280×800`, 26s walkthrough across all 5 modules)
+
+| Module | Screenshot |
+| :--- | :--- |
+| **1. Demand Forecasting** | ![Demand Forecasting](assets/tab1_forecast.png) |
+| **2. Outlet Segmentation** | ![Outlet Segmentation](assets/tab2_outlet.png) |
+| **3. Business Q&A Assistant** | ![Business Assistant](assets/tab3_assistant.png) |
+| **4. Customer Sentiment NLP** | ![Customer Sentiment](assets/tab4_sentiment.png) |
+| **5. MLOps Monitoring & Drift** | ![MLOps Monitoring](assets/tab5_mlops.png) |
 
 ---
 
@@ -54,7 +71,7 @@ In large-scale retail and distribution networks, supply chain misalignments crea
 | **Outlet Analytics & Segmentation** | `ssb/outlet.py` | Scikit-Learn (K-Means) | 5-tier clustering across 1,115 outlets evaluated by silhouette score |
 | **NLP Sentiment Analysis** | `ssb/nlp.py` | TF-IDF, Logistic Regression | Indonesian review sentiment classifier (Macro-F1: 0.92) |
 | **Conversational BI Assistant** | `ssb/nlp.py` | Rule-based Intent Engine | Natural language query engine over store sales data |
-| **Software Integration (REST API)** | `ssb/api.py` | FastAPI, Pydantic, Uvicorn | Production REST API with auth, validation, and p95 latency ~75 ms |
+| **Software Integration (REST API)** | `ssb/api.py` | FastAPI, Pydantic, Uvicorn | Production REST API with auth (`POST /forecast`), validation, and p95 latency 111.8 ms |
 | **Model Evaluation & MLOps** | `ssb/monitor.py` | SciPy (KS-Test), Custom PSI | Drift detection (PSI > 0.25), 5-scenario stress tests, model promotion gate |
 | **Interactive Executive UI** | `ssb/dashboard.py` | Streamlit, Plotly Express | Minimalist enterprise control tower with what-if scenario simulator |
 | **Technical Documentation** | `docs/` | Markdown, Mermaid | Comprehensive Model Card, Pipeline documentation, and User Guide |
@@ -124,14 +141,16 @@ Unsupervised K-Means clustering categorizes 1,115 stores into 5 actionable tiers
 
 ## Production Model Evaluation & Benchmarks
 
-Evaluated on an **out-of-time future holdout of 28 calendar days** (July 2015, unseen during training):
+Evaluated across **3-fold rolling-origin cross-validation** (MAPE: `11.26%`, `11.63%`, `10.23%`; mean **11.04%**) and an **out-of-time future holdout of 28 calendar days** (July 2015, unseen during training):
 
 | Metric | LightGBM Production | Seasonal-Naive Baseline | Target KPI | Result |
 |---|---|---|---|---|
 | **Holdout MAPE** | **9.36%** | 11.96% | $\le 20.0\%$ | **Passed** |
 | **Holdout WAPE** | **8.94%** | 11.86% | - | **Passed** |
 | **Holdout RMSE** | **859.51** | 1,218.02 | - | **Passed** |
-| **Inference Latency (p95)** | **~75 ms** | - | $< 300\text{ ms}$ | **Passed (CPU)** |
+| **3-Fold Rolling CV MAPE** | **11.04%** *(avg)* | - | $\le 20.0\%$ | **Passed** |
+| **Outlet Clustering Silhouette** | **0.27** *(k=5, 1,115 stores)* | - | - | **Evaluated** |
+| **Inference Latency (`POST /forecast`)** | **111.8 ms p95** *(53.0 ms p50)* | - | $< 300\text{ ms}$ | **Passed (CPU)** |
 | **Sentiment Macro F1** | **0.92** | - | $\ge 0.75$ | **Passed** |
 | **Drift Scenarios Detected** | **5 / 5 (100%)** | 0 False Alarms | 5 / 5 | **Passed** |
 
@@ -156,7 +175,16 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 2. Multi-Mode CLI Commands (`main.py`)
+### 2. Dataset Setup (Fresh Clones)
+Raw datasets (`data/`) and serialized model binaries (`models/*.joblib`) are excluded from version control via `.gitignore`. You have two options:
+- **Zero-config Synthetic Mode:** Run `python main.py` directly — if `data/raw/` is empty, `ssb/data.py` automatically generates a Rossmann-schema synthetic dataset (40 stores, 730 days) and trains all models cleanly.
+- **Full Rossmann Benchmark (1,017,209 rows, 1,115 stores):** Place `train.csv` and `store.csv` inside `data/raw/` before running `python main.py`:
+  ```bash
+  mkdir -p data/raw
+  curl -L http://files.fast.ai/part2/lesson14/rossmann.tgz | tar -xz -C data/raw
+  ```
+
+### 3. Multi-Mode CLI Commands (`main.py`)
 The project provides a unified, production-standard entrypoint:
 
 ```bash
@@ -170,12 +198,13 @@ python main.py --dashboard
 python main.py --api
 ```
 
-### 3. Run Automated Tests
+### 4. Run Automated Tests
 ```bash
-pytest -q tests
+pytest -v tests
 ```
 
-### 4. Run with Docker
+### 5. Run with Docker
+Container exposes port `8000` internally (mapped to host port `8050` below):
 ```bash
 docker build -t ssb-intelligence .
 docker run -p 8050:8000 ssb-intelligence
@@ -186,7 +215,13 @@ docker run -p 8050:8000 ssb-intelligence
 ## REST API Specification & Examples
 
 Interactive Swagger documentation is available at `http://localhost:8050/docs`.  
-All POST endpoints require the header `x-api-key: demo-key` (configurable via `SSB_API_KEY`).
+`POST /forecast` requires the header `x-api-key: demo-key` (configurable via `SSB_API_KEY`).
+
+### 0. Health Check (`GET /health`)
+```bash
+curl http://localhost:8050/health
+```
+**Response:** `{"status": "ok"}`
 
 ### 1. Forecast Demand (`POST /forecast`)
 ```bash
@@ -248,6 +283,10 @@ curl -X POST http://localhost:8050/ask \
 
 ```
 SSB-Intelligence/
+├── assets/
+│   ├── demo.gif             # Inline README walkthrough animation (960x600)
+│   ├── demo.mp4             # Full-resolution demo video (1280x800, H.264)
+│   └── tab1_forecast.png..tab5_mlops.png  # Module screenshots
 ├── ssb/
 │   ├── __init__.py          # Module initialization
 │   ├── config.py            # Project paths, horizons, and storage configurations
@@ -263,14 +302,18 @@ SSB-Intelligence/
 │   ├── MODEL_CARD.md        # Governance, model specs, data provenance, limitations
 │   ├── PIPELINE.md          # ETL architecture, idempotency, and data quality gates
 │   └── USER_GUIDE.md        # Operational guide for planners, engineers, and reviewers
+├── models/
+│   └── registry.json        # Champion model metadata (joblib binaries gitignored)
 ├── reports/                 # Stored model evaluation JSONs, segments, and drift logs
 ├── tests/
 │   └── test_all.py          # Validation, API contract, latency, and NLP test suite
-├── Dockerfile               # Production container image
+├── Dockerfile               # Production container image (exposes port 8000)
+├── pytest.ini               # Pytest root pythonpath configuration
 ├── requirements.txt         # Pinned production dependencies
 ├── main.py                  # Multi-mode CLI entrypoint
 └── README.md                # Project documentation
 ```
+*(Note: `data/` and `models/*.joblib` are excluded via `.gitignore` and generated locally when running `python main.py`.)*
 
 ---
 
@@ -283,5 +326,7 @@ For technical and governance deep-dives, consult the following documentation:
 
 ---
 
-## License
-This project is open-source and available under the [MIT License](LICENSE).
+## Limitations & Scope
+- **Sentiment Corpus:** The Indonesian customer review classifier (`ssb/nlp.py`) is trained on a curated synthetic Indonesian corpus for portfolio demonstration and should be retrained on real production reviews prior to live deployment.
+- **BI Assistant Engine:** The Q&A assistant executes deterministic rule-based intent parsing over local DataFrames (no external LLM calls required, guaranteeing zero API cost and full data privacy).
+- **Computer Vision / CCTV Module:** Planned for v2.0 outside the current v1.0 tabular/NLP release scope.
