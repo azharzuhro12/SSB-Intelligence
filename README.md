@@ -7,10 +7,10 @@ See full specification in [PRD.md](PRD.md).
 ## Quickstart (≤ 15 min)
 ```bash
 pip install -r requirements.txt
-python run_all.py                 # Runs complete pipeline
+python main.py                    # Runs complete pipeline
 pytest -q tests                   # 3 test suites incl. p95 latency < 300 ms
-uvicorn ssb.api:app --port 8000   # Interactive Swagger UI at /docs
-streamlit run ssb/dashboard.py    # Interactive dashboard
+python main.py --api              # Starts FastAPI server (port 8050)
+python main.py --dashboard        # Starts Streamlit dashboard (port 8501)
 ```
 
 ## Production Evaluation Results (Real Rossmann Dataset)

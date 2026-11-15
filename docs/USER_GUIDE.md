@@ -1,5 +1,5 @@
 # User Guide
-1. `python run_all.py` to build data and models.
+1. `python main.py` to build data and models (or `python main.py --dashboard` to open the UI directly).
 2. Start API; send `x-api-key: demo-key` (override with env `SSB_API_KEY`).
 3. `/forecast` {store, horizon 1..28}; `/sentiment` {text}; `/ask` {question}.
 4. Q&A understands: total, rata-rata, tertinggi, terendah, promo; optional `toko N` and `N hari`.
