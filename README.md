@@ -1,202 +1,202 @@
 # SSB Demand & Outlet Intelligence Platform
 
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg?logo=python&logoColor=white)](https://www.python.org/)
-[![Model Performance](https://img.shields.io/badge/Holdout%20MAPE-9.36%25-brightgreen.svg)](#production-model-evaluation--benchmarks)
-[![Inference Latency](https://img.shields.io/badge/p95%20Latency-111.8ms%20(CPU)-success.svg)](#rest-api-specification--examples)
-[![Tests](https://img.shields.io/badge/Tests-Passing%20(3%2F3)-emerald.svg)](#4-run-automated-tests)
+[![Model Performance](https://img.shields.io/badge/Holdout%20MAPE-9.36%25-brightgreen.svg)](#evaluasi-model--benchmark-produksi)
+[![Inference Latency](https://img.shields.io/badge/p95%20Latency-111.8ms%20(CPU)-success.svg)](#spesifikasi--contoh-rest-api)
+[![Tests](https://img.shields.io/badge/Tests-Lulus%20(3%2F3)-emerald.svg)](#4-jalankan-pengujian-otomatis)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.100%2B-009688.svg?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.30%2B-FF4B4B.svg?logo=streamlit&logoColor=white)](https://streamlit.io)
 
-An enterprise-grade, end-to-end Machine Learning and AI platform designed for retail and distribution networks (modeled for **SSB**). The platform integrates automated data quality ETL, 28-day store-level sales forecasting with promo simulation, unsupervised outlet clustering, Indonesian customer review sentiment analysis, natural language conversational BI, and automated MLOps drift governance.
+Platform Machine Learning dan AI *end-to-end* berstandar produksi yang dirancang untuk jaringan ritel dan distribusi (dimodelkan untuk **SSB**). Platform ini mengintegrasikan ETL penjaminan kualitas data otomatis, peramalan penjualan harian 28 hari per outlet beserta simulasi promo, klastering outlet tanpa supervisi, analisis sentimen ulasan pelanggan berbahasa Indonesia, asisten BI berbasis bahasa natural, serta tata kelola pemantauan drift MLOps otomatis.
 
-Trained and evaluated on **1,017,209 real-world daily transaction records across 1,115 retail outlets** (Rossmann Store Sales benchmark dataset).
-
----
-
-## Table of Contents
-- [Live Demo & Interface](#live-demo--interface)
-- [Business Problem & Solution](#business-problem--solution)
-- [Mapping to AI Engineer Competencies](#mapping-to-ai-engineer-competencies)
-- [System Architecture](#system-architecture)
-- [Key Modules & Capabilities](#key-modules--capabilities)
-- [Production Model Evaluation & Benchmarks](#production-model-evaluation--benchmarks)
-- [Quickstart Guide](#quickstart-guide)
-- [REST API Specification & Examples](#rest-api-specification--examples)
-- [Repository Structure](#repository-structure)
-- [Documentation & Model Governance](#documentation--model-governance)
-- [Limitations & Scope](#limitations--scope)
+Dilatih dan dievaluasi pada **1.017.209 catatan transaksi harian nyata di 1.115 outlet ritel** (dataset benchmark Rossmann Store Sales).
 
 ---
 
-## Live Demo & Interface
-
-![SSB Intelligence Demo](assets/demo.gif)
-
-> Full high-resolution walkthrough video: **[Watch / Download Demo Video (MP4)](assets/demo.mp4)** (`1280×800`, 26s walkthrough across all 5 modules)
-
----
-
-## Business Problem & Solution
-
-In large-scale retail and distribution networks, supply chain misalignments create costly operational bottlenecks:
-- **Understocking:** Leads to lost sales, stockouts, and diminished customer trust.
-- **Overstocking:** Ties up working capital in perishable or depreciating inventory.
-- **Data Fragmentation:** Outlets vary widely in traffic, promo sensitivity, and regional demand patterns.
-
-### The Solution:
-**SSB Demand & Outlet Intelligence** provides an automated decision-support pipeline:
-1. **Accurate Forecasting:** Generates 28-day ahead daily sales forecasts per store with **9.36% MAPE**, outperforming the seasonal-naive benchmark (11.96%).
-2. **What-If Promo Planner:** Simulates the volume lift of promotional events to optimize ordering.
-3. **Safety Stock Recommendation:** Dynamically calculates safety buffer stock at 95% service level.
-4. **Outlet Strategic Matrix:** Clusters 1,115 stores into 5 distinct operational tiers using K-Means.
-5. **Conversational BI & NLP:** Allows planners to query sales data in conversational Indonesian and analyzes customer feedback sentiment.
-6. **MLOps Reliability:** Proactively detects data drift via Population Stability Index (PSI) and triggers automated retraining.
+## Daftar Isi
+- [Demo Video & Tampilan](#demo-video--tampilan)
+- [Permasalahan Bisnis & Solusi](#permasalahan-bisnis--solusi)
+- [Pemetaan Kompetensi AI Engineer](#pemetaan-kompetensi-ai-engineer)
+- [Arsitektur Sistem](#arsitektur-sistem)
+- [Modul Utama & Kapabilitas](#modul-utama--kapabilitas)
+- [Evaluasi Model & Benchmark Produksi](#evaluasi-model--benchmark-produksi)
+- [Panduan Memulai (Quickstart)](#panduan-memulai-quickstart)
+- [Spesifikasi & Contoh REST API](#spesifikasi--contoh-rest-api)
+- [Struktur Repositori](#struktur-repositori)
+- [Dokumentasi & Tata Kelola Model](#dokumentasi--tata-kelola-model)
+- [Batasan & Ruang Lingkup](#batasan--ruang-lingkup)
 
 ---
 
-## Mapping to AI Engineer Competencies
+## Demo Video & Tampilan
 
-| Job Requirement (SSB Scope) | Implemented Module | Tech Stack | Production Deliverable |
+![Demo SSB Intelligence](assets/demo.gif)
+
+> Video demo resolusi penuh: **[Tonton / Unduh Video Demo (MP4)](assets/demo.mp4)** (`1280×800`, walkthrough 26 detik melintasi seluruh 5 modul)
+
+---
+
+## Permasalahan Bisnis & Solusi
+
+Pada jaringan ritel dan distribusi berskala besar, ketidakselarasan rantai pasok sering menimbulkan hambatan operasional yang mahal:
+- **Kekurangan Stok (Understocking):** Menyebabkan kehilangan penjualan, kekosongan barang (*stockout*), dan menurunnya kepercayaan pelanggan.
+- **Kelebihan Stok (Overstocking):** Mengikat modal kerja pada persediaan yang berisiko kedaluwarsa atau menyusut nilainya.
+- **Fragmentasi Data:** Setiap outlet memiliki karakteristik trafik, sensitivitas promo, dan pola permintaan wilayah yang sangat berbeda.
+
+### Solusi yang Dibangun:
+**SSB Demand & Outlet Intelligence** menyediakan pipeline pendukung keputusan (*decision-support*) otomatis:
+1. **Peramalan Akurat:** Menghasilkan prediksi penjualan harian 28 hari ke depan per toko dengan **MAPE 9,36%**, mengungguli baseline seasonal-naive (11,96%).
+2. **Perencana Promo What-If:** Mensimulasikan lonjakan volume akibat kampanye promosi untuk mengoptimalkan pemesanan stok.
+3. **Rekomendasi Safety Stock:** Menghitung stok pengaman secara dinamis pada tingkat layanan (*service level*) 95%.
+4. **Matriks Strategis Outlet:** Mengelompokkan 1.115 toko ke dalam 5 tingkatan operasional menggunakan K-Means.
+5. **BI Percakapan & NLP:** Memungkinkan perencana menanyakan data penjualan dalam Bahasa Indonesia alami sekaligus menganalisis sentimen ulasan pelanggan.
+6. **Keandalan MLOps:** Mendeteksi pergeseran data (*data drift*) secara proaktif menggunakan Population Stability Index (PSI) dan memicu pelatihan ulang otomatis.
+
+---
+
+## Pemetaan Kompetensi AI Engineer
+
+| Kebutuhan Peran (Lingkup SSB) | Modul Terimplementasi | Tech Stack | Hasil Produksi |
 |---|---|---|---|
-| **ETL & Data Pipeline** | `ssb/etl.py` & `ssb/data.py` | Pandas, NumPy | Automated schema & range validation, leak-free feature engineering |
-| **Sales Demand Forecasting** | `ssb/forecast.py` | LightGBM, Scikit-Learn | Global time-series model (400 trees), rolling CV, 28-day holdout |
-| **Outlet Analytics & Segmentation** | `ssb/outlet.py` | Scikit-Learn (K-Means) | 5-tier clustering across 1,115 outlets evaluated by silhouette score |
-| **NLP Sentiment Analysis** | `ssb/nlp.py` | TF-IDF, Logistic Regression | Indonesian review sentiment classifier (Macro-F1: 0.92) |
-| **Conversational BI Assistant** | `ssb/nlp.py` | Rule-based Intent Engine | Natural language query engine over store sales data |
-| **Software Integration (REST API)** | `ssb/api.py` | FastAPI, Pydantic, Uvicorn | Production REST API with auth (`POST /forecast`), validation, and p95 latency 111.8 ms |
-| **Model Evaluation & MLOps** | `ssb/monitor.py` | SciPy (KS-Test), Custom PSI | Drift detection (PSI > 0.25), 5-scenario stress tests, model promotion gate |
-| **Interactive Executive UI** | `ssb/dashboard.py` | Streamlit, Plotly Express | Minimalist enterprise control tower with what-if scenario simulator |
-| **Technical Documentation** | `docs/` | Markdown, Mermaid | Comprehensive Model Card, Pipeline documentation, and User Guide |
+| **ETL & Pipeline Data** | `ssb/etl.py` & `ssb/data.py` | Pandas, NumPy | Validasi skema & rentang otomatis, rekayasa fitur bebas kebocoran (*leak-free*) |
+| **Peramalan Permintaan Penjualan** | `ssb/forecast.py` | LightGBM, Scikit-Learn | Model time-series global (400 tree), rolling CV, holdout 28 hari |
+| **Analitik & Segmentasi Outlet** | `ssb/outlet.py` | Scikit-Learn (K-Means) | Klastering 5 tingkat di 1.115 outlet yang dievaluasi dengan silhouette score |
+| **Analisis Sentimen NLP** | `ssb/nlp.py` | TF-IDF, Logistic Regression | Pengklasifikasi sentimen ulasan Bahasa Indonesia (Macro-F1: 0,92) |
+| **Asisten BI Percakapan** | `ssb/nlp.py` | Rule-based Intent Engine | Mesin kueri bahasa natural di atas data penjualan toko |
+| **Integrasi Perangkat Lunak (REST API)** | `ssb/api.py` | FastAPI, Pydantic, Uvicorn | REST API produksi dengan autentikasi (`x-api-key`), validasi, dan latensi p95 111,8 ms |
+| **Evaluasi Model & MLOps** | `ssb/monitor.py` | SciPy (KS-Test), Custom PSI | Deteksi drift (`PSI > 0,25`), 5 skenario uji stres, gerbang promosi model |
+| **UI Eksekutif Interaktif** | `ssb/dashboard.py` | Streamlit, Plotly Express | Control tower perusahaan minimalis dengan simulator skenario what-if |
+| **Dokumentasi Teknis** | `docs/` | Markdown, Mermaid | Model Card, dokumentasi Pipeline, dan Panduan Pengguna lengkap |
 
 ---
 
-## System Architecture
+## Arsitektur Sistem
 
 ```mermaid
 flowchart TD
-    subgraph Data Layer
-        A[Raw Ingestion / Rossmann CSVs] --> B[ETL Quality Gate: Schema, Nulls, Bounds]
-        B --> C[(Processed Feature Store: features.pkl)]
+    subgraph Lapisan Data
+        A[Ingesti Mentah / Rossmann CSV] --> B[Gerbang Kualitas ETL: Skema, Null, Batas Nilai]
+        B --> C[(Feature Store Terproses: features.pkl)]
     end
 
-    subgraph Modeling & Intelligence
-        C --> D[LightGBM Forecasting Engine]
-        C --> E[K-Means Outlet Clustering]
-        C --> F[NLP Sentiment & BI Assistant]
+    subgraph Pemodelan & Kecerdasan
+        C --> D[Mesin Peramalan LightGBM]
+        C --> E[Klastering Outlet K-Means]
+        C --> F[Sentimen NLP & Asisten BI]
     end
 
-    subgraph MLOps & Governance
+    subgraph MLOps & Tata Kelola
         D --> G[Model Registry: models/registry.json]
-        G --> H[Champion vs Challenger Promotion Gate]
-        C --> I[Drift Monitor: PSI & KS-Test]
-        I -->|Trigger on PSI > 0.25| D
+        G --> H[Gerbang Promosi Champion vs Challenger]
+        C --> I[Monitor Drift: PSI & KS-Test]
+        I -->|Picu jika PSI > 0.25| D
     end
 
-    subgraph Delivery & Consumption
-        G --> J[FastAPI Backend :8050]
+    subgraph Layanan & Konsumsi
+        G --> J[Backend FastAPI :8050]
         F --> J
-        J --> K[Streamlit Control Tower :8501]
-        J --> L[External SSB Enterprise Systems]
+        J --> K[Control Tower Streamlit :8501]
+        J --> L[Sistem Enterprise SSB Eksternal]
     end
 ```
 
 ---
 
-## Key Modules & Capabilities
+## Modul Utama & Kapabilitas
 
-### 1. Demand Forecasting Engine (`ssb/forecast.py`)
-- **Leakage Prevention:** All lag features (`lag_28`, `lag_35`, `lag_56`) and rolling means (`roll_mean_7`, `roll_mean_28`) are shifted by $\ge 28$ days, allowing direct recursive-free multi-step ahead prediction.
-- **Calendar & Store Signals:** Incorporates day-of-week, day-of-month, ISO week, month, StoreType, Assortment, and CompetitionDistance.
-- **Store Closure Mask:** Automatically identifies stores that close on Sundays and suppresses predictions accordingly.
-- **Safety Stock Calculator:** Computes buffer stock based on model RMSE standard error:
+### 1. Mesin Peramalan Permintaan (`ssb/forecast.py`)
+- **Pencegahan Kebocoran Data:** Seluruh fitur lag (`lag_28`, `lag_35`, `lag_56`) dan rata-rata bergulir (`roll_mean_7`, `roll_mean_28`) digeser $\ge 28$ hari sehingga mendukung prediksi multi-hari langsung tanpa rekursi.
+- **Sinyal Kalender & Toko:** Memanfaatkan hari dalam minggu, tanggal, minggu ISO, bulan, `StoreType`, `Assortment`, dan `CompetitionDistance`.
+- **Masker Toko Tutup:** Mendeteksi toko yang tutup pada hari Minggu secara otomatis dan mengenolkan prediksi pada hari tersebut.
+- **Kalkulator Safety Stock:** Menghitung stok penyangga (*buffer stock*) berdasarkan galat standar RMSE model:
   $$\text{Safety Stock} = Z \times \sigma_{\text{forecast}} \times \sqrt{L}$$
-  where $Z = 1.65$ (95% service level) and $L = 3$ days distribution lead time.
+  dengan $Z = 1{,}65$ (tingkat layanan 95%) dan $L = 3$ hari waktu tunggu distribusi (*lead time*).
 
-### 2. Outlet Segmentation Matrix (`ssb/outlet.py`)
-Unsupervised K-Means clustering categorizes 1,115 stores into 5 actionable tiers based on daily sales volume, coefficient of variation, promo share, and 90-day growth:
-- **Top Performer (225 outlets):** High-volume core profit drivers.
-- **Strong (22 outlets):** Fast-growing outlets with high promo responsiveness.
-- **Mid (602 outlets):** Stable core retail network.
-- **Low (255 outlets):** Lower-density locations requiring inventory rationalization.
-- **Developing (11 outlets):** New or emerging outlets exhibiting rapid sales ramps.
+### 2. Matriks Segmentasi Outlet (`ssb/outlet.py`)
+Klastering K-Means tanpa supervisi mengelompokkan 1.115 toko ke dalam 5 segmen operasional berdasarkan volume penjualan harian, koefisien variasi, rasio promo, dan pertumbuhan 90 hari:
+- **Top Performer (225 outlet):** Penggerak laba utama bervolume tinggi.
+- **Strong (22 outlet):** Outlet bertumbuh cepat dengan respons tinggi terhadap promo.
+- **Mid (602 outlet):** Jaringan ritel inti yang stabil.
+- **Low (255 outlet):** Lokasi berdensitas lebih rendah yang memerlukan rasionalisasi stok.
+- **Developing (11 outlet):** Outlet baru atau berkembang yang menunjukkan kenaikan penjualan pesat.
 
-### 3. Natural Language Processing & BI (`ssb/nlp.py`)
-- **Indonesian Review Sentiment:** Evaluates customer feedback into Positive/Negative polarity with confidence scores (< 5 ms inference).
-- **Conversational BI Assistant:** Parses natural language operational questions (e.g., *"toko tertinggi 30 hari"*, *"pengaruh promo toko 2"*, *"total penjualan toko 1 30 hari"*) into executed DataFrame aggregations with execution logic transparency.
+### 3. Pemrosesan Bahasa Natural & BI (`ssb/nlp.py`)
+- **Sentimen Ulasan Bahasa Indonesia:** Mengklasifikasikan masukan pelanggan menjadi polaritas Positif/Negatif beserta skor keyakinan (inferensi `< 5 ms`).
+- **Asisten BI Percakapan:** Mengurai pertanyaan operasional dalam bahasa alami (misalnya *"toko tertinggi 30 hari"*, *"pengaruh promo toko 2"*, *"total penjualan toko 1 30 hari"*) menjadi agregasi DataFrame lengkap beserta transparansi logika eksekusinya.
 
-### 4. MLOps Drift Governance (`ssb/monitor.py`)
-- Computes **Population Stability Index (PSI)** and **Kolmogorov-Smirnov two-sample tests** comparing current 60-day operational windows against year-ago baseline distributions.
-- **Retraining Policy:** PSI > 0.25 triggers automatic model retraining; champion-challenger promotion only updates the active model version if holdout MAPE improves.
-- Tested against **5 synthetic drift stress scenarios** (demand drop 40%, spike 60%, crash 55%, etc.) with 100% detection rate and 0 false alarms.
+### 4. Tata Kelola Drift MLOps (`ssb/monitor.py`)
+- Menghitung **Population Stability Index (PSI)** dan **uji dua sampel Kolmogorov-Smirnov** dengan membandingkan jendela operasional 60 hari terkini terhadap distribusi baseline setahun sebelumnya.
+- **Kebijakan Pelatihan Ulang:** Nilai `PSI > 0,25` memicu retraining model otomatis; gerbang promosi champion-challenger hanya memperbarui versi model aktif apabila holdout MAPE membaik.
+- Diuji terhadap **5 skenario uji stres drift sintetis** (penurunan permintaan 40%, lonjakan 60%, anjlok 55%, dll.) dengan tingkat deteksi 100% dan 0 alarm palsu.
 
 ---
 
-## Production Model Evaluation & Benchmarks
+## Evaluasi Model & Benchmark Produksi
 
-Evaluated across **3-fold rolling-origin cross-validation** (MAPE: `11.26%`, `11.63%`, `10.23%`; mean **11.04%**) and an **out-of-time future holdout of 28 calendar days** (July 2015, unseen during training):
+Dievaluasi menggunakan **3-fold rolling-origin cross-validation** (MAPE per fold: `11,26%`, `11,63%`, `10,23%`; rata-rata **11,04%**) serta **holdout masa depan di luar sampel selama 28 hari kalender** (Juli 2015, tidak terlihat saat pelatihan):
 
-| Metric | LightGBM Production | Seasonal-Naive Baseline | Target KPI | Result |
+| Metrik | LightGBM Produksi | Baseline Seasonal-Naive | Target KPI | Hasil |
 |---|---|---|---|---|
-| **Holdout MAPE** | **9.36%** | 11.96% | $\le 20.0\%$ | **Passed** |
-| **Holdout WAPE** | **8.94%** | 11.86% | - | **Passed** |
-| **Holdout RMSE** | **859.51** | 1,218.02 | - | **Passed** |
-| **3-Fold Rolling CV MAPE** | **11.04%** *(avg)* | - | $\le 20.0\%$ | **Passed** |
-| **Outlet Clustering Silhouette** | **0.27** *(k=5, 1,115 stores)* | - | - | **Evaluated** |
-| **Inference Latency (`POST /forecast`)** | **111.8 ms p95** *(53.0 ms p50)* | - | $< 300\text{ ms}$ | **Passed (CPU)** |
-| **Sentiment Macro F1** | **0.92** | - | $\ge 0.75$ | **Passed** |
-| **Drift Scenarios Detected** | **5 / 5 (100%)** | 0 False Alarms | 5 / 5 | **Passed** |
+| **Holdout MAPE** | **9,36%** | 11,96% | $\le 20{,}0\%$ | **Lulus** |
+| **Holdout WAPE** | **8,94%** | 11,86% | - | **Lulus** |
+| **Holdout RMSE** | **859,51** | 1.218,02 | - | **Lulus** |
+| **3-Fold Rolling CV MAPE** | **11,04%** *(rata-rata)* | - | $\le 20{,}0\%$ | **Lulus** |
+| **Silhouette Klastering Outlet** | **0,27** *(k=5, 1.115 toko)* | - | - | **Terevaluasi** |
+| **Latensi Inferensi (`POST /forecast`)** | **111,8 ms p95** *(53,0 ms p50)* | - | $< 300\text{ ms}$ | **Lulus (CPU)** |
+| **Sentiment Macro F1** | **0,92** | - | $\ge 0{,}75$ | **Lulus** |
+| **Skenario Drift Terdeteksi** | **5 / 5 (100%)** | 0 Alarm Palsu | 5 / 5 | **Lulus** |
 
 ---
 
-## Quickstart Guide
+## Panduan Memulai (Quickstart)
 
-### Prerequisites
-- Python 3.10, 3.11, or 3.12
+### Prasyarat
+- Python 3.10, 3.11, atau 3.12
 - Linux / macOS / Windows WSL
 
-### 1. Clone & Setup Environment
+### 1. Clone & Siapkan Environment
 ```bash
 git clone https://github.com/azharzuhro12/SSB-Intelligence.git
 cd SSB-Intelligence
 
-# Create & activate virtual environment
+# Buat & aktifkan virtual environment
 python3 -m venv venv
 source venv/bin/activate
 
-# Install dependencies
+# Pasang seluruh dependensi
 pip install -r requirements.txt
 ```
 
-### 2. Dataset Setup (Fresh Clones)
-Raw datasets (`data/`) and serialized model binaries (`models/*.joblib`) are excluded from version control via `.gitignore`. You have two options:
-- **Zero-config Synthetic Mode:** Run `python main.py` directly — if `data/raw/` is empty, `ssb/data.py` automatically generates a Rossmann-schema synthetic dataset (40 stores, 730 days) and trains all models cleanly.
-- **Full Rossmann Benchmark (1,017,209 rows, 1,115 stores):** Place `train.csv` and `store.csv` inside `data/raw/` before running `python main.py`:
+### 2. Pengaturan Dataset (Fresh Clone)
+Dataset mentah (`data/`) dan biner model terlatih (`models/*.joblib`) dikecualikan dari repositori melalui `.gitignore`. Anda dapat memilih salah satu dari dua opsi berikut:
+- **Mode Sintetis Otomatis (Tanpa Konfigurasi):** Jalankan `python main.py` secara langsung — jika `data/raw/` kosong, `ssb/data.py` otomatis membuat dataset sintetis berstruktur Rossmann (40 toko, 730 hari) dan melatih seluruh model dengan lancar.
+- **Benchmark Penuh Rossmann (1.017.209 baris, 1.115 toko):** Letakkan `train.csv` dan `store.csv` ke dalam folder `data/raw/` sebelum menjalankan `python main.py`:
   ```bash
   mkdir -p data/raw
   curl -L http://files.fast.ai/part2/lesson14/rossmann.tgz | tar -xz -C data/raw
   ```
 
-### 3. Multi-Mode CLI Commands (`main.py`)
-The project provides a unified, production-standard entrypoint:
+### 3. Perintah CLI Multi-Mode (`main.py`)
+Proyek ini menyediakan satu *entrypoint* terpadu standar produksi:
 
 ```bash
-# A. Run full end-to-end ML pipeline (ETL -> Train -> Segment -> NLP -> Drift)
+# A. Jalankan pipeline ML end-to-end lengkap (ETL -> Train -> Segment -> NLP -> Drift)
 python main.py
 
-# B. Launch Interactive Streamlit Control Tower (Port 8501)
+# B. Jalankan Control Tower Streamlit Interaktif (Port 8501)
 python main.py --dashboard
 
-# C. Launch REST API Server (Port 8050)
+# C. Jalankan Server REST API (Port 8050)
 python main.py --api
 ```
 
-### 4. Run Automated Tests
+### 4. Jalankan Pengujian Otomatis
 ```bash
 pytest -v tests
 ```
 
-### 5. Run with Docker
-Container exposes port `8000` internally (mapped to host port `8050` below):
+### 5. Jalankan dengan Docker
+Container mengekspos port `8000` di dalam kontainer (dipetakan ke port host `8050` pada contoh di bawah):
 ```bash
 docker build -t ssb-intelligence .
 docker run -p 8050:8000 ssb-intelligence
@@ -204,25 +204,25 @@ docker run -p 8050:8000 ssb-intelligence
 
 ---
 
-## REST API Specification & Examples
+## Spesifikasi & Contoh REST API
 
-Interactive Swagger documentation is available at `http://localhost:8050/docs`.  
-`POST /forecast` requires the header `x-api-key: demo-key` (configurable via `SSB_API_KEY`).
+Dokumentasi interaktif Swagger tersedia di `http://localhost:8050/docs`.  
+Seluruh endpoint `POST` membutuhkan header `x-api-key: demo-key` (dapat dikonfigurasi melalui variabel lingkungan `SSB_API_KEY`).
 
-### 0. Health Check (`GET /health`)
+### 0. Cek Kesehatan Layanan (`GET /health`)
 ```bash
 curl http://localhost:8050/health
 ```
-**Response:** `{"status": "ok"}`
+**Respons:** `{"status": "ok"}`
 
-### 1. Forecast Demand (`POST /forecast`)
+### 1. Peramalan Permintaan (`POST /forecast`)
 ```bash
 curl -X POST http://localhost:8050/forecast \
   -H 'x-api-key: demo-key' \
   -H 'Content-Type: application/json' \
   -d '{"store": 1, "horizon": 7}'
 ```
-**Response:**
+**Respons:**
 ```json
 {
   "store": 1,
@@ -237,16 +237,16 @@ curl -X POST http://localhost:8050/forecast \
   ]
 }
 ```
-*(Note: Sunday 2015-08-02 is automatically zeroed because Outlet #1 is closed on Sundays).*
+*(Catatan: Tanggal Minggu 2015-08-02 otomatis bernilai 0 karena Outlet #1 tutup pada hari Minggu).*
 
-### 2. Sentiment Analysis (`POST /sentiment`)
+### 2. Analisis Sentimen (`POST /sentiment`)
 ```bash
 curl -X POST http://localhost:8050/sentiment \
   -H 'x-api-key: demo-key' \
   -H 'Content-Type: application/json' \
   -d '{"text": "pelayanan kasir sangat ramah, produk lengkap dan toko bersih"}'
 ```
-**Response:**
+**Respons:**
 ```json
 {
   "label": "positive",
@@ -254,14 +254,14 @@ curl -X POST http://localhost:8050/sentiment \
 }
 ```
 
-### 3. Natural Language BI Query (`POST /ask`)
+### 3. Kueri BI Bahasa Natural (`POST /ask`)
 ```bash
 curl -X POST http://localhost:8050/ask \
   -H 'x-api-key: demo-key' \
   -H 'Content-Type: application/json' \
   -d '{"question": "toko tertinggi 30 hari"}'
 ```
-**Response:**
+**Respons:**
 ```json
 {
   "answer": "Toko 262 tertinggi: 652,215 (30 hari terakhir)",
@@ -271,53 +271,53 @@ curl -X POST http://localhost:8050/ask \
 
 ---
 
-## Repository Structure
+## Struktur Repositori
 
 ```
 SSB-Intelligence/
 ├── assets/
-│   ├── demo.gif             # Inline README walkthrough animation (960x600)
-│   └── demo.mp4             # Full-resolution demo video (1280x800, H.264)
+│   ├── demo.gif             # Animasi walkthrough inline untuk README (960x600)
+│   └── demo.mp4             # Video demo resolusi penuh (1280x800, H.264)
 ├── ssb/
-│   ├── __init__.py          # Module initialization
-│   ├── config.py            # Project paths, horizons, and storage configurations
-│   ├── data.py              # Multi-source dataset loader & fallback generator
-│   ├── etl.py               # Validation gates & leak-free feature engineering
-│   ├── forecast.py          # LightGBM regressor & rolling cross-validation
-│   ├── outlet.py            # K-Means clustering & outlet performance profiling
-│   ├── nlp.py               # TF-IDF sentiment classifier & BI intent parser
-│   ├── monitor.py           # PSI / KS-test drift monitor & stress test suite
-│   ├── api.py               # FastAPI application & authentication middleware
-│   └── dashboard.py         # Minimalist enterprise Streamlit control tower
+│   ├── __init__.py          # Inisialisasi modul
+│   ├── config.py            # Konfigurasi path proyek, horizon, dan penyimpanan
+│   ├── data.py              # Loader dataset multi-sumber & generator fallback sintetis
+│   ├── etl.py               # Gerbang validasi & rekayasa fitur bebas kebocoran data
+│   ├── forecast.py          # Regressor LightGBM & rolling cross-validation
+│   ├── outlet.py            # Klastering K-Means & pemrofilan performa outlet
+│   ├── nlp.py               # Pengklasifikasi sentimen TF-IDF & parser intent BI
+│   ├── monitor.py           # Monitor drift PSI / KS-test & suite uji stres
+│   ├── api.py               # Aplikasi FastAPI & middleware autentikasi
+│   └── dashboard.py         # Control tower Streamlit minimalis berstandar enterprise
 ├── docs/
-│   ├── MODEL_CARD.md        # Governance, model specs, data provenance, limitations
-│   ├── PIPELINE.md          # ETL architecture, idempotency, and data quality gates
-│   └── USER_GUIDE.md        # Operational guide for planners, engineers, and reviewers
+│   ├── MODEL_CARD.md        # Tata kelola, spesifikasi model, asal data, dan batasan
+│   ├── PIPELINE.md          # Arsitektur ETL, idempotensi, dan gerbang kualitas data
+│   └── USER_GUIDE.md        # Panduan operasional untuk perencana, engineer, dan reviewer
 ├── models/
-│   └── registry.json        # Champion model metadata (joblib binaries gitignored)
-├── reports/                 # Stored model evaluation JSONs, segments, and drift logs
+│   └── registry.json        # Metadata model champion (file joblib di-gitignore)
+├── reports/                 # Laporan JSON evaluasi model, segmen, dan log drift
 ├── tests/
-│   └── test_all.py          # Validation, API contract, latency, and NLP test suite
-├── Dockerfile               # Production container image (exposes port 8000)
-├── pytest.ini               # Pytest root pythonpath configuration
-├── requirements.txt         # Pinned production dependencies
-├── main.py                  # Multi-mode CLI entrypoint
-└── README.md                # Project documentation
+│   └── test_all.py          # Suite pengujian validasi, kontrak API, latensi, dan NLP
+├── Dockerfile               # Image kontainer produksi (mengekspos port 8000)
+├── pytest.ini               # Konfigurasi root pythonpath untuk Pytest
+├── requirements.txt         # Daftar dependensi produksi
+├── main.py                  # Entrypoint CLI multi-mode
+└── README.md                # Dokumentasi proyek
 ```
-*(Note: `data/` and `models/*.joblib` are excluded via `.gitignore` and generated locally when running `python main.py`.)*
+*(Catatan: Folder `data/` dan file `models/*.joblib` dikecualikan melalui `.gitignore` serta akan dibuat secara lokal ketika menjalankan `python main.py`.)*
 
 ---
 
-## Documentation & Model Governance
+## Dokumentasi & Tata Kelola Model
 
-For technical and governance deep-dives, consult the following documentation:
-- **[Model Card (docs/MODEL_CARD.md)](docs/MODEL_CARD.md):** Complete architectural parameters, intended use, ethical considerations, and known limitations.
-- **[Pipeline Architecture (docs/PIPELINE.md)](docs/PIPELINE.md):** ETL validation rules, data contracts, and scheduling workflows.
-- **[User Guide (docs/USER_GUIDE.md)](docs/USER_GUIDE.md):** End-to-end user manual for supply chain planners and software integration teams.
+Untuk pendalaman teknis dan tata kelola model, silakan merujuk pada dokumen berikut:
+- **[Model Card (docs/MODEL_CARD.md)](docs/MODEL_CARD.md):** Parameter arsitektur lengkap, tujuan penggunaan, pertimbangan etis, dan batasan yang diketahui.
+- **[Arsitektur Pipeline (docs/PIPELINE.md)](docs/PIPELINE.md):** Aturan validasi ETL, kontrak data, dan alur penjadwalan.
+- **[Panduan Pengguna (docs/USER_GUIDE.md)](docs/USER_GUIDE.md):** Panduan penggunaan menyeluruh bagi tim perencana rantai pasok dan integrasi perangkat lunak.
 
 ---
 
-## Limitations & Scope
-- **Sentiment Corpus:** The Indonesian customer review classifier (`ssb/nlp.py`) is trained on a curated synthetic Indonesian corpus for portfolio demonstration and should be retrained on real production reviews prior to live deployment.
-- **BI Assistant Engine:** The Q&A assistant executes deterministic rule-based intent parsing over local DataFrames (no external LLM calls required, guaranteeing zero API cost and full data privacy).
-- **Computer Vision / CCTV Module:** Planned for v2.0 outside the current v1.0 tabular/NLP release scope.
+## Batasan & Ruang Lingkup
+- **Korpus Sentimen:** Pengklasifikasi ulasan pelanggan berbahasa Indonesia (`ssb/nlp.py`) dilatih pada korpus sintetis terkurasi untuk keperluan demonstrasi portofolio dan perlu dilatih ulang menggunakan ulasan produksi nyata sebelum penerapan langsung.
+- **Mesin Asisten BI:** Asisten tanya-jawab mengeksekusi penguraian intent deterministik berbasis aturan di atas DataFrame lokal (tanpa panggilan LLM eksternal sehingga bebas biaya API dan menjaga penuh privasi data).
+- **Modul Computer Vision / CCTV:** Direncanakan untuk rilis v2.0 di luar cakupan tabular/NLP pada rilis v1.0 saat ini.
