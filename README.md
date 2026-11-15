@@ -34,14 +34,6 @@ Trained and evaluated on **1,017,209 real-world daily transaction records across
 
 > Full high-resolution walkthrough video: **[Watch / Download Demo Video (MP4)](assets/demo.mp4)** (`1280×800`, 26s walkthrough across all 5 modules)
 
-| Module | Screenshot |
-| :--- | :--- |
-| **1. Demand Forecasting** | ![Demand Forecasting](assets/tab1_forecast.png) |
-| **2. Outlet Segmentation** | ![Outlet Segmentation](assets/tab2_outlet.png) |
-| **3. Business Q&A Assistant** | ![Business Assistant](assets/tab3_assistant.png) |
-| **4. Customer Sentiment NLP** | ![Customer Sentiment](assets/tab4_sentiment.png) |
-| **5. MLOps Monitoring & Drift** | ![MLOps Monitoring](assets/tab5_mlops.png) |
-
 ---
 
 ## Business Problem & Solution
@@ -285,8 +277,7 @@ curl -X POST http://localhost:8050/ask \
 SSB-Intelligence/
 ├── assets/
 │   ├── demo.gif             # Inline README walkthrough animation (960x600)
-│   ├── demo.mp4             # Full-resolution demo video (1280x800, H.264)
-│   └── tab1_forecast.png..tab5_mlops.png  # Module screenshots
+│   └── demo.mp4             # Full-resolution demo video (1280x800, H.264)
 ├── ssb/
 │   ├── __init__.py          # Module initialization
 │   ├── config.py            # Project paths, horizons, and storage configurations
