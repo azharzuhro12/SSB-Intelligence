@@ -1,12 +1,5 @@
 # SSB Demand & Outlet Intelligence Platform
 
-[![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg?logo=python&logoColor=white)](https://www.python.org/)
-[![Model Performance](https://img.shields.io/badge/Holdout%20MAPE-9.36%25-brightgreen.svg)](#evaluasi-model--benchmark-produksi)
-[![Inference Latency](https://img.shields.io/badge/p95%20Latency-111.8ms%20(CPU)-success.svg)](#spesifikasi--contoh-rest-api)
-[![Tests](https://img.shields.io/badge/Tests-Lulus%20(3%2F3)-emerald.svg)](#4-jalankan-pengujian-otomatis)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.100%2B-009688.svg?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
-[![Streamlit](https://img.shields.io/badge/Streamlit-1.30%2B-FF4B4B.svg?logo=streamlit&logoColor=white)](https://streamlit.io)
-
 Platform Machine Learning dan AI *end-to-end* berstandar produksi yang dirancang untuk jaringan ritel dan distribusi (dimodelkan untuk **SSB**). Platform ini mengintegrasikan ETL penjaminan kualitas data otomatis, peramalan penjualan harian 28 hari per outlet beserta simulasi promo, klastering outlet tanpa supervisi, analisis sentimen ulasan pelanggan berbahasa Indonesia, asisten BI berbasis bahasa natural, serta tata kelola pemantauan drift MLOps otomatis.
 
 Dilatih dan dievaluasi pada **1.017.209 catatan transaksi harian nyata di 1.115 outlet ritel** (dataset benchmark Rossmann Store Sales).
