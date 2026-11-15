@@ -2,3 +2,4 @@ data/
 models/*.joblib
 __pycache__/
 .env
+PRD.md
