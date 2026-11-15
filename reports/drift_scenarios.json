@@ -1,0 +1,8 @@
+{
+  "demand_drop_40%": true,
+  "demand_spike_60%": true,
+  "demand_drop_25%": true,
+  "spike_35%": true,
+  "crash_55%": true,
+  "clean_no_false_alarm": true
+}
