@@ -155,126 +155,36 @@ st.markdown("""
         margin-bottom: 8px;
     }
 
-    /* WhatsApp-Style Chat UI */
-    .wa-container {
-        background-color: #EFEAE2;
-        background-image: radial-gradient(#CBD5E1 0.75px, transparent 0.75px);
-        background-size: 16px 16px;
-        border: 1px solid #E2E8F0;
-        border-radius: 12px;
-        overflow: hidden;
-        margin: 10px 0 16px 0;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-    }
-    .wa-header {
-        background-color: #075E54;
-        color: #FFFFFF;
-        padding: 10px 16px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-    }
-    .wa-avatar {
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        background-color: #128C7E;
-        border: 2px solid #25D366;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 700;
-        font-size: 13px;
-        color: #FFFFFF;
-    }
-    .wa-header-info {
-        flex-grow: 1;
-    }
-    .wa-header-name {
-        font-size: 14px;
-        font-weight: 600;
-        line-height: 1.2;
-    }
-    .wa-header-status {
-        font-size: 11px;
-        color: #D1FAE5;
-        margin-top: 1px;
-    }
-    .wa-header-badge {
-        background-color: rgba(255, 255, 255, 0.15);
-        border: 1px solid rgba(255, 255, 255, 0.25);
-        color: #FFFFFF;
-        font-size: 11px;
-        padding: 3px 8px;
-        border-radius: 12px;
-        font-weight: 500;
-    }
-    .wa-chat-body {
-        padding: 16px 14px;
-        max-height: 420px;
-        overflow-y: auto;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
-    .wa-msg-user-wrapper {
-        display: flex;
-        justify-content: flex-end;
-        width: 100%;
-    }
-    .wa-msg-user {
-        background-color: #D9FDD3;
-        color: #111B21;
-        padding: 8px 12px 6px 12px;
-        border-radius: 10px 0px 10px 10px;
-        max-width: 75%;
-        font-size: 13.5px;
-        line-height: 1.45;
-        box-shadow: 0 1px 1px rgba(11,20,26,.12);
-        word-break: break-word;
-    }
-    .wa-msg-bot-wrapper {
-        display: flex;
-        justify-content: flex-start;
-        width: 100%;
-    }
-    .wa-msg-bot {
+    /* Polished Enterprise Chat UI */
+    [data-testid="stChatMessage"] {
         background-color: #FFFFFF;
-        color: #111B21;
-        padding: 8px 12px 6px 12px;
-        border-radius: 0px 10px 10px 10px;
-        max-width: 80%;
-        font-size: 13.5px;
-        line-height: 1.45;
-        box-shadow: 0 1px 1px rgba(11,20,26,.12);
-        word-break: break-word;
+        border: 1px solid #F1F5F9;
+        border-radius: 10px;
+        padding: 12px 16px;
+        margin-bottom: 8px;
+        box-shadow: 0 1px 2px 0 rgba(15, 23, 42, 0.03);
     }
-    .wa-time {
-        font-size: 10px;
-        color: #667781;
-        text-align: right;
-        margin-top: 4px;
-        display: flex;
-        align-items: center;
-        justify-content: flex-end;
-        gap: 4px;
-    }
-    .wa-ticks {
-        color: #53BDEB;
-        font-size: 12px;
-        font-weight: 700;
-        letter-spacing: -1px;
-    }
-    .wa-op-tag {
+    [data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"]) {
         background-color: #F8FAFC;
         border: 1px solid #E2E8F0;
-        border-radius: 4px;
-        padding: 3px 6px;
+    }
+    .chat-op-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        background-color: #F1F5F9;
+        border: 1px solid #E2E8F0;
+        color: #475569;
         font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
         font-size: 11px;
-        color: #475569;
+        padding: 3px 8px;
+        border-radius: 4px;
         margin-top: 6px;
-        display: inline-block;
+    }
+    .chat-timestamp {
+        font-size: 10.5px;
+        color: #94A3B8;
+        margin-top: 4px;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -614,10 +524,26 @@ with tab_matrix:
 
 
 # =============================================================================
-# TAB 3: CONVERSATIONAL BI (WHATSAPP-STYLE UI)
+# TAB 3: ASISTEN BISNIS
 # =============================================================================
 with tab_bi:
-    # Quick action prompt pills (WhatsApp Business quick reply style)
+    # Header row with title & reset button
+    col_t1, col_t2 = st.columns([3, 1])
+    with col_t1:
+        st.markdown("**Asisten Analitik Bisnis SSB**")
+    with col_t2:
+        if st.button("Bersihkan Chat", use_container_width=True):
+            st.session_state.chat_history = [
+                {
+                    "role": "assistant",
+                    "text": "Halo! Saya Asisten Analitik Bisnis SSB. Silakan tanyakan data performa toko, total omzet, perbandingan promo, atau rata-rata penjualan.",
+                    "op": None,
+                    "time": pd.Timestamp.now().strftime("%H:%M")
+                }
+            ]
+            st.rerun()
+
+    # Minimalist prompt pills
     p_options = [
         "toko tertinggi 30 hari",
         "toko terendah 30 hari",
@@ -635,60 +561,35 @@ with tab_bi:
         st.session_state.chat_history = [
             {
                 "role": "assistant",
-                "text": "Halo! Saya Asisten Bisnis SSB. Silakan tanyakan data penjualan toko, omzet, outlet terbaik/terendah, atau analisis promosi.",
+                "text": "Halo! Saya Asisten Analitik Bisnis SSB. Silakan tanyakan data performa toko, total omzet, perbandingan promo, atau rata-rata penjualan.",
                 "op": None,
-                "time": "09:00"
+                "time": pd.Timestamp.now().strftime("%H:%M")
             }
         ]
 
-    user_query = st.chat_input("Ketik pesan untuk Asisten Bisnis SSB...")
+    user_query = st.chat_input("Ketik pertanyaan Anda tentang data penjualan...")
     active_q = clicked_prompt or user_query
 
     if active_q:
-        cur_time = pd.Timestamp.now().strftime("%H:%M")
-        st.session_state.chat_history.append({"role": "user", "text": active_q, "op": None, "time": cur_time})
+        cur_t = pd.Timestamp.now().strftime("%H:%M")
+        st.session_state.chat_history.append({"role": "user", "text": active_q, "op": None, "time": cur_t})
         ans = nlp.ask(active_q, df)
-        st.session_state.chat_history.append({"role": "assistant", "text": ans["answer"], "op": ans.get("op"), "time": cur_time})
+        st.session_state.chat_history.append({
+            "role": "assistant",
+            "text": ans["answer"],
+            "op": ans.get("op"),
+            "time": cur_t
+        })
 
-    # Render WhatsApp Chat Window
-    chat_html = [
-        '<div class="wa-container">',
-        '<div class="wa-header">',
-        '<div class="wa-avatar">SSB</div>',
-        '<div class="wa-header-info">',
-        '<div class="wa-header-name">SSB Business Intelligence</div>',
-        '<div class="wa-header-status">● online • Siap Menjawab Data Penjualan</div>',
-        '</div>',
-        '<div class="wa-header-badge">AI Assistant</div>',
-        '</div>',
-        '<div class="wa-chat-body">'
-    ]
-
+    # Render Elegant Native Chat Messages
     for msg in st.session_state.chat_history:
-        t = msg.get("time", "12:00")
-        if msg["role"] == "user":
-            chat_html.append(f'''
-            <div class="wa-msg-user-wrapper">
-                <div class="wa-msg-user">
-                    <div>{msg["text"]}</div>
-                    <div class="wa-time">{t} <span class="wa-ticks">✓✓</span></div>
-                </div>
-            </div>
-            ''')
-        else:
-            op_html = f'<div class="wa-op-tag">⚙️ {msg["op"]}</div>' if msg.get("op") else ''
-            chat_html.append(f'''
-            <div class="wa-msg-bot-wrapper">
-                <div class="wa-msg-bot">
-                    <div>{msg["text"]}</div>
-                    {op_html}
-                    <div class="wa-time">{t}</div>
-                </div>
-            </div>
-            ''')
-
-    chat_html.append('</div></div>')
-    st.markdown("".join(chat_html), unsafe_allow_html=True)
+        avatar = "👤" if msg["role"] == "user" else "🏢"
+        with st.chat_message(msg["role"], avatar=avatar):
+            st.write(msg["text"])
+            if msg.get("op"):
+                st.markdown(f'<div class="chat-op-badge">⚙️ Logika Data: <code>{msg["op"]}</code></div>', unsafe_allow_html=True)
+            if msg.get("time"):
+                st.markdown(f'<div class="chat-timestamp">{msg["time"]}</div>', unsafe_allow_html=True)
 
 
 # =============================================================================
