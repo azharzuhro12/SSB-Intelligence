@@ -61,7 +61,7 @@ def load_current():
     reg = json.loads((MODELS / "registry.json").read_text())
     return joblib.load(MODELS / f"forecast_v{reg['current']}.joblib")
 
-def forecast_store(store, horizon=HORIZON, df=None):
+def forecast_store(store, horizon=HORIZON, df=None, promo_days=None):
     """Forecast next `horizon` days (<=28) for a store using lag>=28 features (no recursion needed)."""
     df = pd.read_pickle(PROC / "features.pkl") if df is None else df
     hist = df[df["Store"] == store].sort_values("Date")
@@ -72,8 +72,10 @@ def forecast_store(store, horizon=HORIZON, df=None):
     static = hist.iloc[-1]
     ext = sales.reindex(pd.date_range(sales.index.min(), fut["Date"].max()))
     rows = []
-    for d in fut["Date"]:
-        r = {"Store": store, "Promo": 0, "StateHoliday": 0, "StoreType": static["StoreType"],
+    promo_set = set(promo_days) if promo_days is not None else set()
+    for idx, d in enumerate(fut["Date"]):
+        is_promo = 1 if (idx in promo_set or d.strftime("%Y-%m-%d") in promo_set) else 0
+        r = {"Store": store, "Promo": is_promo, "StateHoliday": 0, "StoreType": static["StoreType"],
              "Assortment": static["Assortment"], "CompetitionDistance": static["CompetitionDistance"],
              "dow": d.dayofweek, "month": d.month, "day": d.day, "week": int(d.isocalendar()[1])}
         for lag in (28, 35, 56): r[f"lag_{lag}"] = ext.get(d - pd.Timedelta(days=lag), np.nan)
