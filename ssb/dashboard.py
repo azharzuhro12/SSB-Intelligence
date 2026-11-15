@@ -481,57 +481,40 @@ with tab_bi:
 
 
 # =============================================================================
-# TAB 4: CUSTOMER SENTIMENT & VOICE OF CUSTOMER
+# TAB 4: ANALISIS SENTIMEN ULASAN PELANGGAN
 # =============================================================================
 with tab_voc:
-    col_v1, col_v2 = st.columns([1.3, 1])
+    st.subheader("💬 Analisis Sentimen Ulasan Toko & Layanan")
+    st.write("Model NLP untuk menganalisis feedback pelanggan Bahasa Indonesia secara otomatis.")
+
+    sample_reviews = [
+        "pelayanan ramah dan pengiriman sangat cepat",
+        "produk selalu segar dan stok lengkap mantap",
+        "antrian kasir lama sekali dan barang sering kosong",
+        "harga mahal tidak sesuai dan toko kotor kecewa"
+    ]
+    st.write("Contoh ulasan:")
+    rev_cols = st.columns(len(sample_reviews))
+    chosen_rev = None
+    for i, s in enumerate(sample_reviews):
+        if rev_cols[i].button(f"Contoh {i+1}", key=f"rev_{i}"):
+            chosen_rev = s
+
+    input_text = st.text_area(
+        "Masukkan teks ulasan pelanggan:",
+        value=chosen_rev if chosen_rev else "pelayanan kasir sangat ramah, barang lengkap dan bersih",
+        height=100
+    )
     
-    with col_v1:
-        st.markdown("##### Uji Sentimen Masukan Pelanggan")
-        
-        # Quick samples
-        sample_feeds = [
-            "pelayanan kasir sangat ramah, barang lengkap dan toko bersih recommended",
-            "antrian kasir lama sekali, barang banyak yang kosong mengecewakan",
-            "pengiriman barang cepat tepat waktu dan kemasan rapi sangat puas",
-            "harga mahal pelayanan lambat dan produk kurang segar"
-        ]
-        
-        c_b1, c_b2, c_b3, c_b4 = st.columns(4)
-        chosen_sample = None
-        if c_b1.button("Sampel 1 (Puas)", use_container_width=True): chosen_sample = sample_feeds[0]
-        if c_b2.button("Sampel 2 (Kecewa)", use_container_width=True): chosen_sample = sample_feeds[1]
-        if c_b3.button("Sampel 3 (Cepat)", use_container_width=True): chosen_sample = sample_feeds[2]
-        if c_b4.button("Sampel 4 (Lambat)", use_container_width=True): chosen_sample = sample_feeds[3]
-
-        current_text = st.text_area(
-            "Teks Ulasan:",
-            value=chosen_sample if chosen_sample else sample_feeds[0],
-            height=90
-        )
-        
-        if st.button("Analisis Sentimen", type="primary"):
-            res = nlp.sentiment(current_text)
-            if res["label"] == "positive":
-                st.success(f"**Hasil: Positif** (Probabilitas Kepuasan: {res['score']:.1%})")
+    if st.button("Analisis Sentimen", type="primary"):
+        with st.spinner("Menganalisis teks..."):
+            ans = nlp.sentiment(input_text)
+            label = ans["label"]
+            score = ans["score"]
+            if label == "positive":
+                st.success(f"✅ **Sentimen: Positif** (Tingkat Kepuasan: {score * 100:.1f}%)")
             else:
-                st.error(f"**Hasil: Negatif** (Tingkat Ketidakpuasan: {(1 - res['score']):.1%})")
-
-    with col_v2:
-        st.markdown("##### Pemantauan Aspek Ulasan Lapangan")
-        aspects = [
-            ("Layanan & Keramahan Kasir", "91% Positif", "#16A34A"),
-            ("Ketersediaan Stok Barang", "78% Positif", "#16A34A"),
-            ("Kecepatan Antrean Kasir", "42% Negatif (Perlu Perhatian)", "#DC2626"),
-            ("Kualitas & Kondisi Kemasan", "88% Positif", "#16A34A")
-        ]
-        for title, status, color in aspects:
-            st.markdown(f"""
-            <div style="background:#F8FAFC; border:1px solid #E2E8F0; padding:10px 12px; border-radius:6px; margin-bottom:8px;">
-                <div style="font-size:12px; color:#64748B; font-weight:600;">{title}</div>
-                <div style="font-size:14px; color:{color}; font-weight:700;">{status}</div>
-            </div>
-            """, unsafe_allow_html=True)
+                st.error(f"❌ **Sentimen: Negatif** (Tingkat Ketidakpuasan: {(1 - score) * 100:.1f}%)")
 
 
 # =============================================================================
