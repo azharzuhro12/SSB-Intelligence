@@ -2,8 +2,6 @@
 
 End-to-end AI portfolio project: ETL → demand forecasting → outlet segmentation → NLP (Indonesian) → REST API → drift monitoring & auto-retraining. CPU only. Evaluated on real **Rossmann Store Sales** competition dataset (1,017,209 daily records across 1,115 stores).
 
-See full specification in [PRD.md](PRD.md).
-
 ## Quickstart (≤ 15 min)
 ```bash
 pip install -r requirements.txt
