@@ -97,6 +97,18 @@ st.markdown("""
         color: #16A34A;
         font-weight: 500;
     }
+    .kpi-unit {
+        font-size: 12.5px;
+        font-weight: 500;
+        color: #64748B;
+        margin-left: 2px;
+    }
+    [data-testid="stMetricValue"] {
+        font-size: 1.25rem !important;
+        white-space: normal !important;
+        overflow: visible !important;
+        text-overflow: clip !important;
+    }
 
     /* Outlet Tagline */
     .outlet-tagline {
@@ -354,15 +366,52 @@ with tab_fc:
     safety_stock = int(1.65 * (rmse_val * 0.75) * np.sqrt(3))
     
     c_p1, c_p2, c_p3, c_p4 = st.columns(4)
-    c_p1.metric("Total Proyeksi Permintaan", f"{total_proj:,.0f} unit")
-    c_p2.metric("Rata-rata Kebutuhan Harian", f"{daily_avg:,.0f} unit/hari")
-    c_p3.metric("Rekomendasi Safety Stock", f"{safety_stock:,} unit")
-    if simulate_promo:
-        lift = total_proj - pd.DataFrame(base_fc)["forecast"].sum()
-        pct_lift = (lift / max(1, pd.DataFrame(base_fc)["forecast"].sum())) * 100
-        c_p4.metric("Estimasi Lift Promosi", f"+{lift:,.0f} unit", delta=f"+{pct_lift:.1f}%")
-    else:
-        c_p4.metric("Status Promosi", "Baseline Normal", delta_color="off")
+    with c_p1:
+        st.markdown(f"""
+        <div class="kpi-card">
+            <div class="kpi-title">Total Proyeksi Permintaan</div>
+            <div class="kpi-value">{total_proj:,.0f} <span class="kpi-unit">unit</span></div>
+            <div class="kpi-delta">Horizon {selected_horizon} Hari ke Depan</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    with c_p2:
+        st.markdown(f"""
+        <div class="kpi-card">
+            <div class="kpi-title">Rata-rata Kebutuhan Harian</div>
+            <div class="kpi-value">{daily_avg:,.0f} <span class="kpi-unit">unit/hari</span></div>
+            <div class="kpi-delta">Hari Operasional Aktif</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    with c_p3:
+        st.markdown(f"""
+        <div class="kpi-card">
+            <div class="kpi-title">Rekomendasi Safety Stock</div>
+            <div class="kpi-value">{safety_stock:,} <span class="kpi-unit">unit</span></div>
+            <div class="kpi-delta">Buffer Service Level 95%</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    with c_p4:
+        if simulate_promo:
+            lift = total_proj - pd.DataFrame(base_fc)["forecast"].sum()
+            pct_lift = (lift / max(1, pd.DataFrame(base_fc)["forecast"].sum())) * 100
+            st.markdown(f"""
+            <div class="kpi-card">
+                <div class="kpi-title">Estimasi Lift Promosi</div>
+                <div class="kpi-value">+{lift:,.0f} <span class="kpi-unit">unit</span></div>
+                <div class="kpi-delta">+{pct_lift:.1f}% vs Tanpa Promo</div>
+            </div>
+            """, unsafe_allow_html=True)
+        else:
+            st.markdown("""
+            <div class="kpi-card">
+                <div class="kpi-title">Status Promosi Toko</div>
+                <div class="kpi-value">Baseline Normal</div>
+                <div class="kpi-delta" style="color: #64748B;">Tidak Ada Promo Aktif</div>
+            </div>
+            """, unsafe_allow_html=True)
 
 
 # =============================================================================
