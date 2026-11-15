@@ -1,5 +1,5 @@
 """SSB Enterprise AI — Demand Planning & Distribution Intelligence
-Unified Production Control Tower for Demand Forecasting, Outlet Analytics,
+Unified Minimalist Control Tower for Demand Forecasting, Outlet Analytics,
 Natural Language Business Intelligence, and MLOps Governance.
 """
 
@@ -14,135 +14,145 @@ from ssb import forecast, nlp, monitor
 from ssb.config import PROC, REPORTS
 
 # -----------------------------------------------------------------------------
-# PAGE CONFIGURATION & ENTERPRISE DESIGN
+# PAGE CONFIGURATION
 # -----------------------------------------------------------------------------
 st.set_page_config(
-    page_title="SSB Enterprise AI • Demand Intelligence",
+    page_title="SSB Intelligence",
     page_icon="🏢",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# Polished, minimal, high-contrast B2B CSS
+# -----------------------------------------------------------------------------
+# MINIMALIST, ELEGANT DESIGN SYSTEM (CSS)
+# -----------------------------------------------------------------------------
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-    
+
     html, body, [class*="css"] {
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        color: #0F172A;
     }
-    
-    /* Top Header */
-    .brand-container {
+
+    /* Minimalist Top Brand Bar */
+    .brand-bar {
         display: flex;
         justify-content: space-between;
         align-items: center;
         padding: 4px 0 16px 0;
-        border-bottom: 1px solid #E2E8F0;
+        border-bottom: 1px solid #F1F5F9;
         margin-bottom: 18px;
     }
     .brand-title {
         font-size: 20px;
         font-weight: 700;
         color: #0F172A;
-        letter-spacing: -0.02em;
+        letter-spacing: -0.025em;
         margin: 0;
     }
-    .brand-subtitle {
-        font-size: 13px;
-        color: #64748B;
-        margin: 2px 0 0 0;
-    }
-    .status-badge {
+    .live-pill {
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        background-color: #F0FDF4;
+        background-color: #F8FAFC;
         color: #166534;
         font-size: 12px;
         font-weight: 600;
         padding: 4px 10px;
         border-radius: 9999px;
-        border: 1px solid #BBF7D0;
+        border: 1px solid #E2E8F0;
     }
-    .status-dot {
+    .live-dot {
         width: 6px;
         height: 6px;
         background-color: #16A34A;
         border-radius: 50%;
     }
 
-    /* Minimalist KPI Card */
+    /* Minimalist KPI Cards */
     .kpi-card {
         background: #FFFFFF;
-        border: 1px solid #E2E8F0;
-        border-radius: 8px;
-        padding: 12px 14px;
+        border: 1px solid #F1F5F9;
+        border-radius: 10px;
+        padding: 14px 16px;
+        box-shadow: 0 1px 2px 0 rgba(15, 23, 42, 0.03);
     }
     .kpi-title {
         font-size: 11px;
         font-weight: 600;
-        color: #64748B;
+        color: #94A3B8;
         text-transform: uppercase;
-        letter-spacing: 0.04em;
+        letter-spacing: 0.05em;
     }
     .kpi-value {
-        font-size: 20px;
+        font-size: 22px;
         font-weight: 700;
         color: #0F172A;
-        margin: 2px 0;
+        letter-spacing: -0.02em;
+        margin: 4px 0 2px 0;
     }
     .kpi-delta {
-        font-size: 11.5px;
+        font-size: 12px;
         color: #16A34A;
         font-weight: 500;
     }
     .kpi-unit {
-        font-size: 12.5px;
+        font-size: 13px;
         font-weight: 500;
         color: #64748B;
         margin-left: 2px;
     }
-    [data-testid="stMetricValue"] {
-        font-size: 1.25rem !important;
-        white-space: normal !important;
-        overflow: visible !important;
-        text-overflow: clip !important;
-    }
 
-    /* Outlet Tagline */
+    /* Clean Outlet Tagline */
     .outlet-tagline {
         display: flex;
+        flex-wrap: wrap;
         gap: 8px;
         align-items: center;
-        margin-bottom: 12px;
+        margin-bottom: 14px;
         font-size: 13px;
-        color: #334155;
+        color: #475569;
     }
     .tag-badge {
-        background: #F1F5F9;
-        border: 1px solid #E2E8F0;
-        padding: 2px 8px;
-        border-radius: 4px;
+        background: #F8FAFC;
+        border: 1px solid #F1F5F9;
+        padding: 3px 9px;
+        border-radius: 6px;
         font-weight: 600;
         font-size: 12px;
-        color: #0F172A;
+        color: #1E293B;
     }
 
-    /* Tab styling */
+    /* Clean Minimalist Tabs */
     .stTabs [data-baseweb="tab-list"] {
         gap: 6px;
-        border-bottom: 1px solid #E2E8F0;
+        border-bottom: 1px solid #F1F5F9;
     }
     .stTabs [data-baseweb="tab"] {
-        padding: 8px 14px;
+        padding: 8px 16px;
         font-weight: 600;
         font-size: 13px;
         color: #64748B;
+        border-radius: 6px 6px 0 0;
     }
     .stTabs [aria-selected="true"] {
         color: #0F172A !important;
         border-bottom: 2px solid #0F172A !important;
+    }
+
+    /* Sidebar Clean Styling */
+    section[data-testid="stSidebar"] {
+        background-color: #FAFAFA;
+        border-right: 1px solid #F1F5F9;
+    }
+    .sidebar-section-title {
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: #94A3B8;
+        margin-bottom: 8px;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -169,17 +179,14 @@ total_stores = df["Store"].nunique()
 holdout = fc_metrics.get("holdout", {"MAPE": 9.36, "WAPE": 8.94, "RMSE": 859.5})
 
 # -----------------------------------------------------------------------------
-# TOP HEADER & 4 CLEAN EXECUTIVE KPIS
+# MINIMALIST HEADER & 4 CLEAN EXECUTIVE KPIS
 # -----------------------------------------------------------------------------
 st.markdown("""
-<div class="brand-container">
-    <div>
-        <h1 class="brand-title">SSB Enterprise AI • Demand & Distribution Intelligence</h1>
-        <p class="brand-subtitle">Platform Terpadu Peramalan Permintaan, Analitik Outlet, NLP, dan Pemantauan MLOps</p>
-    </div>
-    <div class="status-badge">
-        <span class="status-dot"></span>
-        Sistem Operasional Aktif
+<div class="brand-bar">
+    <h1 class="brand-title">SSB Intelligence</h1>
+    <div class="live-pill">
+        <span class="live-dot"></span>
+        Sistem Aktif
     </div>
 </div>
 """, unsafe_allow_html=True)
@@ -188,7 +195,7 @@ k1, k2, k3, k4 = st.columns(4)
 with k1:
     st.markdown(f"""
     <div class="kpi-card">
-        <div class="kpi-title">Total Outlet Terpantau</div>
+        <div class="kpi-title">Outlet Terpantau</div>
         <div class="kpi-value">{total_stores:,}</div>
         <div class="kpi-delta">Jaringan Distribusi 100% Aktif</div>
     </div>
@@ -197,7 +204,7 @@ with k1:
 with k2:
     st.markdown(f"""
     <div class="kpi-card">
-        <div class="kpi-title">Akurasi Model (Holdout MAPE)</div>
+        <div class="kpi-title">Holdout MAPE</div>
         <div class="kpi-value">{holdout.get('MAPE', 9.36):.2f}%</div>
         <div class="kpi-delta">↗ Melampaui Baseline (11.96%)</div>
     </div>
@@ -206,18 +213,18 @@ with k2:
 with k3:
     st.markdown("""
     <div class="kpi-card">
-        <div class="kpi-title">Integritas Data & Drift</div>
-        <div class="kpi-value">Stabil (PSI 0.09)</div>
-        <div class="kpi-delta">Tidak Terjadi Pergeseran Kritis</div>
+        <div class="kpi-title">Distribusi Data</div>
+        <div class="kpi-value">Stabil</div>
+        <div class="kpi-delta">PSI 0.09 • Normal</div>
     </div>
     """, unsafe_allow_html=True)
 
 with k4:
     st.markdown("""
     <div class="kpi-card">
-        <div class="kpi-title">Latency Inferensi (p95)</div>
+        <div class="kpi-title">Latensi Inferensi</div>
         <div class="kpi-value">~75 ms</div>
-        <div class="kpi-delta">Infrastruktur CPU Optimal</div>
+        <div class="kpi-delta">Optimal di CPU</div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -227,27 +234,26 @@ st.write("")
 # SIDEBAR CONTROLS (FOCUSED & MINIMAL)
 # -----------------------------------------------------------------------------
 with st.sidebar:
-    st.markdown("### Kontrol & Parameter")
+    st.markdown('<div class="sidebar-section-title">Parameter Operasional</div>', unsafe_allow_html=True)
     
     selected_store = st.selectbox(
         "Pilih Outlet (ID Toko):",
         options=sorted(df["Store"].unique()),
-        index=0,
-        help="Memilih toko untuk evaluasi peramalan demand."
+        index=0
     )
     
     selected_horizon = st.select_slider(
         "Horizon Peramalan:",
         options=[7, 14, 21, 28],
         value=14,
-        format_func=lambda x: f"{x} Hari ke Depan"
+        format_func=lambda x: f"{x} Hari"
     )
     
     st.divider()
+    st.markdown('<div class="sidebar-section-title">Skenario What-If</div>', unsafe_allow_html=True)
     simulate_promo = st.checkbox(
         "Simulasikan Promosi Toko",
-        value=False,
-        help="Simulasi pengaruh kegiatan promosi pada horizon peramalan."
+        value=False
     )
     if simulate_promo:
         promo_scope = st.radio("Jadwal Promosi:", ["Semua Hari", "Hari Kerja (Sen-Jum)", "Akhir Pekan (Sab-Min)"])
@@ -260,10 +266,10 @@ with st.sidebar:
 # -----------------------------------------------------------------------------
 tab_fc, tab_matrix, tab_bi, tab_voc, tab_mlops = st.tabs([
     "Peramalan Permintaan",
-    "Kinerja & Matriks Outlet",
-    "Asisten Analitik Bisnis",
-    "Sentimen Ulasan Pelanggan",
-    "Tata Kelola Model (MLOps)"
+    "Analitik Outlet",
+    "Asisten Bisnis",
+    "Sentimen Pelanggan",
+    "Tata Kelola MLOps"
 ])
 
 # =============================================================================
@@ -279,11 +285,11 @@ with tab_fc:
     st.markdown(f"""
     <div class="outlet-tagline">
         <strong>Outlet #{selected_store}</strong>
-        <span class="tag-badge">Klaster: {tier_label}</span>
-        <span class="tag-badge">Tipe Toko: {store_info['StoreType']}</span>
+        <span class="tag-badge">{tier_label}</span>
+        <span class="tag-badge">Tipe: {store_info['StoreType']}</span>
         <span class="tag-badge">Assortment: {store_info['Assortment']}</span>
-        <span class="tag-badge">Jarak Kompetisi: {store_info['CompetitionDistance']:,.0f} m</span>
-        <span style="color:#64748B; margin-left:auto;">Rata-rata Historis: <strong>{avg_sales:,.0f} unit/hari</strong></span>
+        <span class="tag-badge">Kompetisi: {store_info['CompetitionDistance']:,.0f} m</span>
+        <span style="color:#64748B; margin-left:auto;">Rata-rata: <strong>{avg_sales:,.0f} unit/hari</strong></span>
     </div>
     """, unsafe_allow_html=True)
     
@@ -304,14 +310,14 @@ with tab_fc:
     fc_df["date"] = pd.to_datetime(fc_df["date"])
     hist_df = df[df["Store"] == selected_store].sort_values("Date").tail(60)
 
-    # Plotly Forecast Chart
+    # Minimalist Plotly Forecast Chart
     fig_fc = go.Figure()
     
     # Actuals
     fig_fc.add_trace(go.Scatter(
         x=hist_df["Date"], y=hist_df["Sales"],
         name="Penjualan Riil", mode="lines",
-        line=dict(color="#2563EB", width=2),
+        line=dict(color="#3B82F6", width=2),
         hovertemplate="<b>Aktual:</b> %{y:,.0f} unit<extra></extra>"
     ))
     
@@ -323,9 +329,9 @@ with tab_fc:
         x=pd.concat([fc_df["date"], fc_df["date"][::-1]]),
         y=upper + lower[::-1],
         fill="toself",
-        fillcolor="rgba(16, 185, 129, 0.10)",
+        fillcolor="rgba(16, 185, 129, 0.08)",
         line=dict(color="rgba(255,255,255,0)"),
-        name="Rentang Toleransi (±1σ)",
+        name="Interval Ketidakpastian (±1σ)",
         hoverinfo="skip"
     ))
     
@@ -333,7 +339,7 @@ with tab_fc:
     fig_fc.add_trace(go.Scatter(
         x=fc_df["date"], y=fc_df["forecast"],
         name="Prediksi LightGBM", mode="lines+markers",
-        line=dict(color="#10B981", width=2.5, dash="dash"),
+        line=dict(color="#10B981", width=2, dash="dash"),
         marker=dict(size=4, color="#059669"),
         hovertemplate="<b>Prediksi:</b> %{y:,.0f} unit<extra></extra>"
     ))
@@ -345,22 +351,24 @@ with tab_fc:
         fig_fc.add_trace(go.Scatter(
             x=b_df["date"], y=b_df["forecast"],
             name="Baseline (Tanpa Promo)", mode="lines",
-            line=dict(color="#94A3B8", width=1.5, dash="dot"),
+            line=dict(color="#CBD5E1", width=1.5, dash="dot"),
             hovertemplate="<b>Baseline:</b> %{y:,.0f} unit<extra></extra>"
         ))
         
     fig_fc.update_layout(
         template="plotly_white",
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
         height=380,
         margin=dict(l=10, r=10, t=10, b=10),
         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
-        xaxis=dict(showgrid=True, gridcolor="#F1F5F9", zeroline=False),
-        yaxis=dict(title="Volume (Unit)", showgrid=True, gridcolor="#F1F5F9", zeroline=False),
+        xaxis=dict(showgrid=False, zeroline=False),
+        yaxis=dict(title="Volume (Unit)", showgrid=True, gridcolor="#F8FAFC", zeroline=False),
         hovermode="x unified"
     )
     st.plotly_chart(fig_fc, use_container_width=True)
     
-    # 4 Planning Recommendations
+    # 4 Clean Planning Recommendations Cards
     total_proj = fc_df["forecast"].sum()
     daily_avg = fc_df[fc_df["forecast"] > 0]["forecast"].mean() if (fc_df["forecast"] > 0).any() else 0
     safety_stock = int(1.65 * (rmse_val * 0.75) * np.sqrt(3))
@@ -444,9 +452,11 @@ with tab_matrix:
         height=380
     )
     
-    fig_matrix.add_vline(x=segments_df["avg_sales"].mean(), line_dash="dot", line_color="#CBD5E1")
-    fig_matrix.add_hline(y=0.0, line_dash="dot", line_color="#CBD5E1")
+    fig_matrix.add_vline(x=segments_df["avg_sales"].mean(), line_dash="dot", line_color="#E2E8F0")
+    fig_matrix.add_hline(y=0.0, line_dash="dot", line_color="#E2E8F0")
     fig_matrix.update_layout(
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
         margin=dict(l=10, r=10, t=20, b=10),
         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
     )
@@ -485,9 +495,7 @@ with tab_matrix:
 # TAB 3: CONVERSATIONAL BI
 # =============================================================================
 with tab_bi:
-    st.markdown("**Ajukan Pertanyaan Data Penjualan (Bahasa Indonesia):**")
-    
-    # Prompt pills
+    # Minimalist prompt pills
     p_options = [
         "toko tertinggi 30 hari",
         "toko terendah 30 hari",
@@ -533,32 +541,29 @@ with tab_bi:
 # TAB 4: CUSTOMER SENTIMENT & VOICE OF CUSTOMER
 # =============================================================================
 with tab_voc:
-    st.markdown("#### Analisis Sentimen Ulasan Pelanggan (Voice of Customer)")
-    st.write("Model NLP berbasis representasi n-gram dan Logistic Regression untuk memantau persepsi pelanggan berbahasa Indonesia.")
-    
     s_col1, s_col2 = st.columns([1.2, 1])
     
     with s_col1:
-        st.markdown("##### Uji Sentimen Teks Interaktif")
+        st.markdown("##### Uji Sentimen Teks")
         user_review = st.text_area(
-            "Masukkan Teks Masukan Pelanggan:",
+            "Teks Ulasan Pelanggan:",
             value="pelayanan kasir sangat ramah, produk lengkap dan toko bersih recommended",
-            height=110
+            height=100
         )
         
-        if st.button("Jalankan Klasifikasi Sentimen", type="primary"):
-            with st.spinner("Memproses representasi teks..."):
+        if st.button("Analisis Sentimen", type="primary"):
+            with st.spinner("Memproses..."):
                 res_sent = nlp.sentiment(user_review)
                 score = res_sent["score"]
                 label = res_sent["label"]
                 
                 if label == "positive":
-                    st.success(f"**Klasifikasi: POSITIF** (Skor Probabilitas: {score:.1%})")
+                    st.success(f"**Klasifikasi: Positif** (Tingkat Kepuasan: {score:.1%})")
                 else:
-                    st.error(f"**Klasifikasi: NEGATIF** (Skor Ketidakpuasan: {(1 - score):.1%})")
+                    st.error(f"**Klasifikasi: Negatif** (Tingkat Ketidakpuasan: {(1 - score):.1%})")
                     
         st.divider()
-        st.markdown("**Contoh Kasus Ulasan Lapangan:**")
+        st.markdown("**Sampel Ulasan:**")
         preset_reviews = [
             ("Positif", "barang selalu segar dan pengiriman cepat tepat waktu mantap"),
             ("Negatif", "antrian kasir lama sekali produk sering kosong mengecewakan"),
@@ -570,9 +575,9 @@ with tab_voc:
             st.markdown(f"<span style='color:{badge_color}; font-weight:600;'>● [{p_label}]</span> {p_text}", unsafe_allow_html=True)
 
     with s_col2:
-        st.markdown("##### Performa Model Evaluasi NLP")
-        st.markdown(f"""
-        <div class="kpi-card" style="margin-bottom:14px;">
+        st.markdown("##### Evaluasi Model NLP")
+        st.markdown("""
+        <div class="kpi-card" style="margin-bottom:12px;">
             <div class="kpi-title">Macro F1-Score (Holdout Test)</div>
             <div class="kpi-value">0.92</div>
             <div class="kpi-delta">Target PRD: ≥ 0.75 (Lolos)</div>
@@ -583,12 +588,14 @@ with tab_voc:
         fig_donut = go.Figure(data=[go.Pie(
             labels=["Sentimen Positif", "Sentimen Negatif"],
             values=[55, 45],
-            hole=.6,
+            hole=.65,
             marker_colors=["#10B981", "#EF4444"]
         )])
         fig_donut.update_layout(
             showlegend=True,
-            height=250,
+            paper_bgcolor="rgba(0,0,0,0)",
+            plot_bgcolor="rgba(0,0,0,0)",
+            height=230,
             margin=dict(l=10, r=10, t=10, b=10),
             legend=dict(orientation="h", yanchor="bottom", y=-0.1, xanchor="center", x=0.5)
         )
@@ -601,17 +608,17 @@ with tab_voc:
 with tab_mlops:
     g1, g2 = st.columns(2)
     with g1:
-        st.markdown("##### Spesifikasi Model Produksi (Model Card)")
+        st.markdown("##### Spesifikasi Model (Model Card)")
         st.markdown(f"""
         - **Model ID:** `forecast_v{fc_metrics.get('version', 2)}` (LightGBM Regressor)
         - **Dataset Latih:** 1.017.209 baris riil (1.115 outlet)
-        - **Horizon Evaluasi:** 28 Hari Kalender (Holdout Out-of-Time)
-        - **Hasil Holdout:** MAPE **{holdout.get('MAPE', 9.36):.2f}%** | WAPE **{holdout.get('WAPE', 8.94):.2f}%**
+        - **Horizon Evaluasi:** 28 Hari Kalender Out-of-Time
+        - **Metrik Holdout:** MAPE **{holdout.get('MAPE', 9.36):.2f}%** | WAPE **{holdout.get('WAPE', 8.94):.2f}%**
         - **Kebijakan Retraining:** Trigger otomatis jika PSI > 0.25
         """)
         
     with g2:
-        st.markdown("##### Metrik Stabilitas Distribusi Data (PSI)")
+        st.markdown("##### Stabilitas Distribusi Data (PSI)")
         drift_metrics_table = [
             {"Fitur / Variabel": "Sales (Penjualan Harian)", "Nilai PSI": 0.094, "Ambang Batas": "< 0.25", "Status": "Stabil (Normal)"},
             {"Fitur / Variabel": "roll_mean_7 (Rata-rata 7H)", "Nilai PSI": 0.168, "Ambang Batas": "< 0.25", "Status": "Pergeseran Moderat"}
